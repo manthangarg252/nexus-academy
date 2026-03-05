@@ -1,0 +1,732 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1.0"/>
+<title>Nexus Academy — Engineered for the Future</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/>
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=Manrope:wght@300;400;500;600;700&display=swap" rel="stylesheet"/>
+<style>
+:root {
+  --bg:        #080c14;
+  --bg2:       #0d1220;
+  --bg3:       #111827;
+  --surface:   #151d2e;
+  --surface2:  #1c2740;
+  --border:    rgba(255,255,255,.07);
+  --border2:   rgba(99,220,120,.18);
+  --lime:      #63dc78;
+  --lime-dim:  #3fa852;
+  --lime-glow: rgba(99,220,120,.2);
+  --amber:     #f5a623;
+  --sky:       #4fc3f7;
+  --muted:     #7a8ba8;
+  --text:      #e8edf5;
+  --white:     #ffffff;
+  --radius:    14px;
+  --font-head: 'Syne', sans-serif;
+  --font-body: 'Manrope', sans-serif;
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--font-body);background:var(--bg);color:var(--text);overflow-x:hidden;cursor:none;}
+#cursor{width:12px;height:12px;border-radius:50%;background:var(--lime);position:fixed;pointer-events:none;z-index:9999;transform:translate(-50%,-50%);transition:width .2s,height .2s;mix-blend-mode:screen;}
+#cursor-ring{width:38px;height:38px;border-radius:50%;border:1.5px solid rgba(99,220,120,.5);position:fixed;pointer-events:none;z-index:9998;transform:translate(-50%,-50%);transition:width .25s,height .25s;}
+#bg-canvas{position:fixed;inset:0;z-index:0;pointer-events:none;opacity:.55;}
+/* NAV */
+nav{position:fixed;top:0;left:0;right:0;z-index:500;display:flex;align-items:center;justify-content:space-between;padding:0 60px;height:72px;background:rgba(8,12,20,.8);backdrop-filter:blur(20px);border-bottom:1px solid var(--border);transition:background .3s;}
+.logo{font-family:var(--font-head);font-size:1.45rem;font-weight:800;letter-spacing:-.5px;color:var(--white);}
+.logo span{color:var(--lime);}
+.nav-links{display:flex;gap:32px;list-style:none;}
+.nav-links a{text-decoration:none;color:var(--muted);font-size:.85rem;font-weight:600;letter-spacing:.4px;text-transform:uppercase;transition:color .2s;position:relative;}
+.nav-links a::after{content:'';position:absolute;bottom:-4px;left:0;right:0;height:2px;background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .25s;}
+.nav-links a:hover{color:var(--white);}
+.nav-links a:hover::after{transform:scaleX(1);}
+.nav-right{display:flex;align-items:center;gap:16px;}
+.nav-pill{font-size:.78rem;font-weight:700;color:var(--muted);border:1px solid var(--border);border-radius:50px;padding:7px 18px;background:transparent;cursor:pointer;transition:all .2s;letter-spacing:.5px;text-transform:uppercase;}
+.nav-pill:hover{color:var(--white);border-color:rgba(255,255,255,.2);}
+.nav-cta{font-size:.82rem;font-weight:700;color:var(--bg);background:var(--lime);border:none;border-radius:50px;padding:9px 24px;cursor:pointer;letter-spacing:.3px;transition:transform .2s,box-shadow .2s;box-shadow:0 0 20px rgba(99,220,120,.3);}
+.nav-cta:hover{transform:translateY(-2px);box-shadow:0 0 36px rgba(99,220,120,.5);}
+/* HERO */
+.hero{min-height:100vh;display:flex;flex-direction:column;justify-content:center;padding:120px 60px 80px;position:relative;z-index:1;overflow:hidden;}
+.hero-glow{position:absolute;width:700px;height:700px;border-radius:50%;background:radial-gradient(circle,rgba(99,220,120,.12) 0%,transparent 70%);top:-10%;right:-5%;pointer-events:none;}
+.hero-glow2{position:absolute;width:500px;height:500px;border-radius:50%;background:radial-gradient(circle,rgba(79,195,247,.08) 0%,transparent 70%);bottom:5%;left:-5%;pointer-events:none;}
+.hero-eyebrow{display:flex;align-items:center;gap:12px;margin-bottom:28px;opacity:0;animation:slideUp .7s .1s ease forwards;}
+.eyebrow-line{width:40px;height:2px;background:var(--lime);}
+.eyebrow-text{font-size:.75rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--lime);}
+.hero h1{font-family:var(--font-head);font-size:clamp(3.2rem,7vw,6.5rem);font-weight:800;line-height:.98;letter-spacing:-2px;max-width:900px;opacity:0;animation:slideUp .8s .2s ease forwards;}
+.hero h1 .outline-text{-webkit-text-stroke:2px var(--lime);color:transparent;}
+.hero h1 .block{display:block;}
+.hero-bottom{display:flex;align-items:flex-end;justify-content:space-between;margin-top:52px;gap:40px;flex-wrap:wrap;opacity:0;animation:slideUp .8s .35s ease forwards;}
+.hero-desc{max-width:440px;font-size:1.05rem;line-height:1.75;color:var(--muted);font-weight:400;}
+.hero-desc strong{color:var(--text);font-weight:600;}
+.hero-actions{display:flex;gap:14px;align-items:center;flex-shrink:0;}
+.btn-lime{background:var(--lime);color:var(--bg);border:none;border-radius:50px;padding:14px 34px;font-size:.9rem;font-weight:700;cursor:pointer;letter-spacing:.3px;transition:transform .2s,box-shadow .2s;box-shadow:0 0 24px rgba(99,220,120,.35);font-family:var(--font-body);}
+.btn-lime:hover{transform:translateY(-3px);box-shadow:0 4px 40px rgba(99,220,120,.55);}
+.btn-ghost{background:transparent;color:var(--text);border:1.5px solid var(--border2);border-radius:50px;padding:13px 30px;font-size:.9rem;font-weight:600;cursor:pointer;transition:all .2s;font-family:var(--font-body);}
+.btn-ghost:hover{background:var(--lime-glow);border-color:var(--lime);color:var(--lime);}
+.hero-marquee-wrap{margin-top:70px;overflow:hidden;border-top:1px solid var(--border);border-bottom:1px solid var(--border);padding:16px 0;opacity:0;animation:slideUp .7s .5s ease forwards;position:relative;z-index:1;}
+.hero-marquee{display:flex;gap:60px;width:max-content;animation:marquee 22s linear infinite;}
+.marquee-item{display:flex;align-items:center;gap:10px;font-size:.8rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--muted);white-space:nowrap;}
+.marquee-dot{width:6px;height:6px;border-radius:50%;background:var(--lime);flex-shrink:0;}
+@keyframes marquee{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+/* STATS */
+.stats-strip{display:grid;grid-template-columns:repeat(4,1fr);border-top:1px solid var(--border);border-bottom:1px solid var(--border);position:relative;z-index:1;}
+.stat-item{padding:48px 40px;border-right:1px solid var(--border);position:relative;overflow:hidden;transition:background .3s;}
+.stat-item:last-child{border-right:none;}
+.stat-item:hover{background:var(--surface);}
+.stat-item::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--lime);transform:scaleX(0);transform-origin:left;transition:transform .4s;}
+.stat-item:hover::before{transform:scaleX(1);}
+.stat-num{font-family:var(--font-head);font-size:3rem;font-weight:800;color:var(--white);line-height:1;margin-bottom:6px;}
+.stat-num span{color:var(--lime);}
+.stat-label{font-size:.8rem;color:var(--muted);font-weight:600;letter-spacing:.5px;text-transform:uppercase;}
+/* SECTION */
+.section{padding:100px 60px;position:relative;z-index:1;}
+.section-head{display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:60px;flex-wrap:wrap;gap:24px;}
+.section-kicker{font-size:.72rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--lime);display:flex;align-items:center;gap:10px;margin-bottom:14px;}
+.section-kicker::before{content:'';display:block;width:30px;height:2px;background:var(--lime);}
+.section-title{font-family:var(--font-head);font-size:clamp(2rem,3.5vw,3rem);font-weight:800;letter-spacing:-1px;line-height:1.1;color:var(--white);}
+.section-title em{font-style:normal;color:var(--lime);}
+.link-all{font-size:.82rem;font-weight:700;color:var(--muted);text-decoration:none;letter-spacing:.5px;text-transform:uppercase;display:flex;align-items:center;gap:8px;transition:color .2s;border:1px solid var(--border);border-radius:50px;padding:10px 22px;}
+.link-all:hover{color:var(--lime);border-color:var(--border2);}
+.link-all::after{content:'→';transition:transform .2s;}
+.link-all:hover::after{transform:translateX(4px);}
+/* TABS */
+.tabs{display:flex;gap:8px;margin-bottom:36px;flex-wrap:wrap;}
+.tab{font-size:.78rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:9px 20px;border-radius:50px;cursor:pointer;border:1px solid var(--border);color:var(--muted);background:transparent;transition:all .2s;font-family:var(--font-body);}
+.tab.active,.tab:hover{background:var(--lime);color:var(--bg);border-color:var(--lime);}
+/* COURSES */
+.courses-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.course-card{background:var(--bg2);transition:background .3s;cursor:pointer;position:relative;overflow:hidden;display:flex;flex-direction:column;}
+.course-card:hover{background:var(--surface);}
+.course-card::after{content:'';position:absolute;inset:0;background:linear-gradient(135deg,var(--lime-glow) 0%,transparent 60%);opacity:0;transition:opacity .3s;}
+.course-card:hover::after{opacity:1;}
+.card-top{height:170px;display:flex;align-items:center;justify-content:center;position:relative;overflow:hidden;}
+.card-top-inner{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;font-size:4rem;}
+.g1{background:linear-gradient(135deg,#0d2a1c,#1a4a2e);}
+.g2{background:linear-gradient(135deg,#0d1e2e,#1a3050);}
+.g3{background:linear-gradient(135deg,#2a1a0d,#4a2e1a);}
+.g4{background:linear-gradient(135deg,#1a0d2a,#301a4a);}
+.g5{background:linear-gradient(135deg,#0d1a2a,#1a3040);}
+.g6{background:linear-gradient(135deg,#1e0d0d,#4a1a1a);}
+.card-tag{position:absolute;top:14px;left:14px;z-index:2;font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;padding:5px 12px;border-radius:50px;background:rgba(8,12,20,.7);color:var(--lime);border:1px solid var(--border2);backdrop-filter:blur(8px);}
+.card-body{padding:24px;flex:1;display:flex;flex-direction:column;}
+.card-body h3{font-family:var(--font-head);font-size:1.05rem;font-weight:700;color:var(--white);margin-bottom:10px;line-height:1.3;}
+.card-body p{font-size:.82rem;color:var(--muted);line-height:1.6;flex:1;margin-bottom:20px;}
+.card-footer{display:flex;align-items:center;justify-content:space-between;padding-top:16px;border-top:1px solid var(--border);}
+.card-price{font-family:var(--font-head);font-size:1.1rem;font-weight:800;color:var(--white);}
+.card-price sub{font-size:.65rem;color:var(--muted);font-family:var(--font-body);font-weight:400;}
+.card-meta{display:flex;align-items:center;gap:16px;}
+.card-dur{font-size:.75rem;color:var(--muted);}
+.card-btn{width:34px;height:34px;border-radius:50%;background:var(--surface2);border:1px solid var(--border);color:var(--lime);display:flex;align-items:center;justify-content:center;cursor:pointer;font-size:.9rem;transition:all .2s;}
+.card-btn:hover{background:var(--lime);color:var(--bg);transform:scale(1.1);}
+.card-stars{color:var(--amber);font-size:.75rem;}
+.card-rcount{font-size:.72rem;color:var(--muted);}
+/* BENTO */
+.bento{display:grid;grid-template-columns:repeat(12,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.bento-cell{background:var(--bg2);padding:40px;transition:background .3s;position:relative;overflow:hidden;}
+.bento-cell:hover{background:var(--surface);}
+.bento-cell.span-4{grid-column:span 4;}
+.bento-cell.span-5{grid-column:span 5;}
+.bento-cell.span-6{grid-column:span 6;}
+.bento-cell.span-7{grid-column:span 7;}
+.bento-cell.span-8{grid-column:span 8;}
+.bento-cell.span-12{grid-column:span 12;}
+.bento-cell.tall{min-height:280px;}
+.cell-icon{width:54px;height:54px;border-radius:14px;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:1.5rem;margin-bottom:22px;}
+.bento-cell h4{font-family:var(--font-head);font-size:1.15rem;font-weight:700;color:var(--white);margin-bottom:10px;}
+.bento-cell p{font-size:.84rem;color:var(--muted);line-height:1.65;}
+.big-number{font-family:var(--font-head);font-size:5rem;font-weight:800;color:var(--lime);line-height:1;margin-bottom:10px;}
+.bento-highlight{background:linear-gradient(135deg,#0d2018 0%,#0a1a28 100%);border:1px solid var(--border2);}
+.bento-highlight::before{content:'';position:absolute;top:0;left:0;right:0;height:1px;background:linear-gradient(90deg,transparent,var(--lime),transparent);}
+.pill-group{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px;}
+.pill{font-size:.72rem;font-weight:700;letter-spacing:.5px;text-transform:uppercase;padding:6px 14px;border-radius:50px;border:1px solid var(--border);color:var(--muted);}
+.pill.active{border-color:var(--border2);color:var(--lime);background:var(--lime-glow);}
+.progress-list{margin-top:20px;display:flex;flex-direction:column;gap:14px;}
+.prog-label{display:flex;justify-content:space-between;margin-bottom:6px;font-size:.78rem;color:var(--muted);font-weight:600;}
+.prog-label span:last-child{color:var(--lime);}
+.prog-track{height:4px;background:var(--surface2);border-radius:10px;overflow:hidden;}
+.prog-fill{height:100%;border-radius:10px;background:linear-gradient(90deg,var(--lime),var(--sky));transition:width 1.2s cubic-bezier(.4,0,.2,1);width:0;}
+/* INSTRUCTORS */
+.instructors-row{display:grid;grid-template-columns:repeat(4,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.instructor-card{background:var(--bg2);padding:36px 28px;text-align:center;transition:background .3s;position:relative;overflow:hidden;}
+.instructor-card:hover{background:var(--surface);}
+.inst-avatar{width:80px;height:80px;border-radius:50%;margin:0 auto 16px;display:flex;align-items:center;justify-content:center;font-size:2rem;border:2px solid var(--border2);background:var(--surface2);}
+.inst-name{font-family:var(--font-head);font-size:1rem;font-weight:700;color:var(--white);margin-bottom:4px;}
+.inst-role{font-size:.75rem;color:var(--lime);font-weight:600;letter-spacing:.5px;text-transform:uppercase;margin-bottom:10px;}
+.inst-bio{font-size:.78rem;color:var(--muted);line-height:1.55;}
+/* TESTIMONIALS */
+.testi-section{background:var(--bg2);border-top:1px solid var(--border);border-bottom:1px solid var(--border);}
+.testi-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:2px;background:var(--border);border:1px solid var(--border);border-radius:var(--radius);overflow:hidden;}
+.testi-card{background:var(--bg);padding:38px;transition:background .3s;position:relative;}
+.testi-card:hover{background:var(--surface);}
+.testi-card::before{content:'\201C';position:absolute;top:20px;right:28px;font-family:Georgia,serif;font-size:5rem;color:var(--lime);opacity:.15;line-height:1;}
+.testi-stars{color:var(--amber);font-size:.9rem;margin-bottom:18px;letter-spacing:2px;}
+.testi-text{font-size:.9rem;line-height:1.75;color:var(--muted);margin-bottom:24px;font-style:italic;}
+.testi-author{display:flex;align-items:center;gap:14px;}
+.testi-av{width:44px;height:44px;border-radius:50%;background:var(--surface2);border:1px solid var(--border2);display:flex;align-items:center;justify-content:center;font-size:1.1rem;}
+.testi-name{font-weight:700;font-size:.9rem;color:var(--white);}
+.testi-role{font-size:.74rem;color:var(--muted);}
+.testi-company{margin-left:auto;font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--lime);border:1px solid var(--border2);border-radius:50px;padding:4px 12px;}
+/* CTA */
+.cta-section{background:var(--bg);padding:120px 60px;text-align:center;position:relative;z-index:1;overflow:hidden;}
+.cta-glow{position:absolute;width:600px;height:600px;border-radius:50%;background:radial-gradient(circle,rgba(99,220,120,.1) 0%,transparent 70%);top:50%;left:50%;transform:translate(-50%,-50%);pointer-events:none;}
+.cta-kicker{font-size:.72rem;font-weight:700;letter-spacing:3px;text-transform:uppercase;color:var(--lime);margin-bottom:20px;}
+.cta-title{font-family:var(--font-head);font-size:clamp(2.5rem,5vw,4.5rem);font-weight:800;letter-spacing:-2px;line-height:1;color:var(--white);max-width:700px;margin:0 auto 24px;}
+.cta-sub{font-size:1rem;color:var(--muted);max-width:480px;margin:0 auto 42px;line-height:1.7;}
+.cta-btns{display:flex;gap:14px;justify-content:center;flex-wrap:wrap;}
+/* FOOTER */
+footer{background:var(--bg2);border-top:1px solid var(--border);padding:70px 60px 32px;position:relative;z-index:1;}
+.footer-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:60px;margin-bottom:60px;}
+.footer-logo{font-family:var(--font-head);font-size:1.6rem;font-weight:800;color:var(--white);margin-bottom:16px;display:block;}
+.footer-logo span{color:var(--lime);}
+.footer-desc{font-size:.84rem;color:var(--muted);line-height:1.7;max-width:280px;}
+.footer-col h5{font-size:.78rem;font-weight:700;letter-spacing:2px;text-transform:uppercase;color:var(--text);margin-bottom:18px;}
+.footer-col a{display:block;color:var(--muted);text-decoration:none;font-size:.83rem;margin-bottom:10px;transition:color .2s;}
+.footer-col a:hover{color:var(--lime);}
+.footer-bottom{border-top:1px solid var(--border);padding-top:24px;display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;}
+.footer-bottom p{font-size:.78rem;color:var(--muted);}
+.footer-bottom .badge{font-size:.7rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--lime);border:1px solid var(--border2);border-radius:50px;padding:5px 14px;}
+/* WA */
+/* ── Custom AI Chatbot ── */
+#ai-fab{position:fixed;bottom:32px;right:32px;z-index:600;display:flex;align-items:center;gap:10px;background:linear-gradient(135deg,#0d2018,#0a1a28);border:1.5px solid rgba(99,220,120,.35);border-radius:50px;padding:12px 20px 12px 14px;cursor:pointer;box-shadow:0 0 28px rgba(99,220,120,.25),0 8px 32px rgba(0,0,0,.4);transition:transform .2s,box-shadow .2s,border-color .2s;}
+#ai-fab:hover{transform:translateY(-3px);box-shadow:0 0 44px rgba(99,220,120,.45),0 12px 40px rgba(0,0,0,.5);border-color:rgba(99,220,120,.7);}
+.ai-fab-icon{width:36px;height:36px;border-radius:50%;background:linear-gradient(135deg,#63dc78,#3fa852);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 14px rgba(99,220,120,.5);}
+.ai-fab-icon svg{width:20px;height:20px;fill:#0d2018;}
+.ai-fab-text{display:flex;flex-direction:column;line-height:1.2;}
+.ai-fab-label{font-size:.65rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--lime);}
+.ai-fab-name{font-family:var(--font-head);font-size:.9rem;font-weight:700;color:var(--white);}
+.ai-fab-pulse{position:absolute;top:10px;right:10px;width:8px;height:8px;border-radius:50%;background:var(--lime);animation:wPulse 2s ease-in-out infinite;}
+/* Chat window */
+#ai-chat-window{position:fixed;bottom:110px;right:32px;width:380px;height:560px;background:#0d1220;border:1.5px solid rgba(99,220,120,.25);border-radius:20px;box-shadow:0 24px 80px rgba(0,0,0,.7),0 0 40px rgba(99,220,120,.1);display:flex;flex-direction:column;z-index:601;overflow:hidden;transform:scale(.85) translateY(30px);opacity:0;pointer-events:none;transition:transform .3s cubic-bezier(.34,1.56,.64,1),opacity .25s ease;}
+#ai-chat-window.open{transform:scale(1) translateY(0);opacity:1;pointer-events:all;}
+/* Header */
+.chat-header{background:linear-gradient(135deg,#0d2018,#0a1a28);padding:16px 18px;display:flex;align-items:center;gap:12px;border-bottom:1px solid rgba(99,220,120,.15);}
+.chat-header-avatar{width:40px;height:40px;border-radius:50%;background:linear-gradient(135deg,#63dc78,#3fa852);display:flex;align-items:center;justify-content:center;flex-shrink:0;box-shadow:0 0 14px rgba(99,220,120,.4);}
+.chat-header-avatar svg{width:22px;height:22px;fill:#0d2018;}
+.chat-header-info{flex:1;}
+.chat-header-name{font-family:'Syne',sans-serif;font-size:.95rem;font-weight:700;color:#fff;}
+.chat-header-status{font-size:.72rem;color:#63dc78;display:flex;align-items:center;gap:5px;}
+.status-dot{width:6px;height:6px;border-radius:50%;background:#63dc78;display:inline-block;animation:wPulse 2s ease-in-out infinite;}
+.chat-close{background:rgba(255,255,255,.08);border:none;width:30px;height:30px;border-radius:50%;color:#7a8ba8;cursor:pointer;font-size:1rem;display:flex;align-items:center;justify-content:center;transition:all .2s;}
+.chat-close:hover{background:rgba(99,220,120,.2);color:#63dc78;}
+/* Messages */
+.chat-messages{flex:1;overflow-y:auto;padding:18px;display:flex;flex-direction:column;gap:12px;scroll-behavior:smooth;}
+.chat-messages::-webkit-scrollbar{width:4px;}
+.chat-messages::-webkit-scrollbar-track{background:transparent;}
+.chat-messages::-webkit-scrollbar-thumb{background:#1c2740;border-radius:10px;}
+.msg{max-width:82%;display:flex;flex-direction:column;gap:4px;animation:msgIn .3s ease;}
+@keyframes msgIn{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+.msg.bot{align-self:flex-start;}
+.msg.user{align-self:flex-end;}
+.msg-bubble{padding:10px 14px;border-radius:16px;font-size:.84rem;line-height:1.55;}
+.msg.bot .msg-bubble{background:#151d2e;color:#e8edf5;border-bottom-left-radius:4px;border:1px solid rgba(255,255,255,.06);}
+.msg.user .msg-bubble{background:linear-gradient(135deg,#3fa852,#63dc78);color:#080c14;font-weight:600;border-bottom-right-radius:4px;}
+.msg-time{font-size:.65rem;color:#7a8ba8;padding:0 4px;}
+.msg.user .msg-time{text-align:right;}
+/* Bot avatar in messages */
+.msg-row{display:flex;align-items:flex-end;gap:8px;}
+.msg-av{width:26px;height:26px;border-radius:50%;background:linear-gradient(135deg,#63dc78,#3fa852);display:flex;align-items:center;justify-content:center;flex-shrink:0;}
+.msg-av svg{width:14px;height:14px;fill:#0d2018;}
+/* Quick replies */
+.quick-replies{display:flex;flex-wrap:wrap;gap:6px;padding:0 18px 10px;}
+.qr-btn{font-size:.75rem;font-weight:600;color:#63dc78;border:1px solid rgba(99,220,120,.3);background:rgba(99,220,120,.05);border-radius:50px;padding:6px 14px;cursor:pointer;transition:all .2s;font-family:'Manrope',sans-serif;white-space:nowrap;}
+.qr-btn:hover{background:rgba(99,220,120,.15);border-color:#63dc78;}
+/* Typing indicator */
+.typing-indicator{display:flex;align-items:center;gap:8px;padding:4px 0;}
+.typing-dots{display:flex;gap:4px;}
+.typing-dots span{width:7px;height:7px;border-radius:50%;background:#63dc78;opacity:.4;animation:typingDot 1.2s ease-in-out infinite;}
+.typing-dots span:nth-child(2){animation-delay:.2s;}
+.typing-dots span:nth-child(3){animation-delay:.4s;}
+@keyframes typingDot{0%,60%,100%{opacity:.4;transform:none}30%{opacity:1;transform:translateY(-4px)}}
+/* Input */
+.chat-input-row{padding:12px 14px;border-top:1px solid rgba(255,255,255,.06);display:flex;align-items:center;gap:10px;background:#080c14;}
+.chat-input{flex:1;background:#151d2e;border:1px solid rgba(255,255,255,.08);border-radius:50px;padding:10px 16px;color:#e8edf5;font-size:.84rem;font-family:'Manrope',sans-serif;outline:none;transition:border-color .2s;}
+.chat-input:focus{border-color:rgba(99,220,120,.4);}
+.chat-input::placeholder{color:#7a8ba8;}
+.chat-send{width:38px;height:38px;border-radius:50%;background:linear-gradient(135deg,#63dc78,#3fa852);border:none;cursor:pointer;display:flex;align-items:center;justify-content:center;flex-shrink:0;transition:transform .2s,box-shadow .2s;box-shadow:0 0 14px rgba(99,220,120,.3);}
+.chat-send:hover{transform:scale(1.1);box-shadow:0 0 22px rgba(99,220,120,.5);}
+.chat-send svg{width:16px;height:16px;fill:#0d2018;}
+/* Powered by */
+.chat-powered{text-align:center;padding:6px;font-size:.62rem;color:#3a4a5c;letter-spacing:.5px;}
+/* ANIM */
+@keyframes slideUp{from{opacity:0;transform:translateY(28px)}to{opacity:1;transform:none}}
+@keyframes wPulse{0%,100%{box-shadow:0 0 0 0 rgba(99,220,120,.6)}50%{box-shadow:0 0 0 6px rgba(99,220,120,0)}}
+.reveal{opacity:0;transform:translateY(24px);transition:opacity .7s ease,transform .7s ease;}
+.reveal.visible{opacity:1;transform:none;}
+::-webkit-scrollbar{width:5px;}
+::-webkit-scrollbar-track{background:var(--bg);}
+::-webkit-scrollbar-thumb{background:var(--surface2);border-radius:10px;}
+/* RESPONSIVE */
+@media(max-width:1024px){
+  .courses-grid{grid-template-columns:repeat(2,1fr);}
+  .bento-cell.span-4{grid-column:span 6;}
+  .bento-cell.span-5{grid-column:span 6;}
+  .bento-cell.span-7{grid-column:span 6;}
+  .bento-cell.span-8{grid-column:span 12;}
+  .stats-strip{grid-template-columns:repeat(2,1fr);}
+  .footer-top{grid-template-columns:1fr 1fr;}
+  .instructors-row{grid-template-columns:repeat(2,1fr);}
+}
+@media(max-width:768px){
+  nav{padding:0 20px;}
+  .nav-links{display:none;}
+  .section,.hero,footer,.cta-section{padding:70px 22px;}
+  .hero{padding:110px 22px 60px;}
+  .courses-grid,.testi-grid{grid-template-columns:1fr;}
+  .bento-cell.span-4,.bento-cell.span-5,.bento-cell.span-6,.bento-cell.span-7,.bento-cell.span-8{grid-column:span 12;}
+  .stats-strip{grid-template-columns:repeat(2,1fr);}
+  .instructors-row{grid-template-columns:repeat(2,1fr);}
+  .footer-top{grid-template-columns:1fr;}
+  .hero h1{font-size:3rem;letter-spacing:-1px;}
+}
+</style>
+</head>
+<body>
+<div id="cursor"></div>
+<div id="cursor-ring"></div>
+<canvas id="bg-canvas"></canvas>
+
+<!-- NAV -->
+<nav id="main-nav">
+  <div class="logo">Nexus<span>.</span>Academy</div>
+  <ul class="nav-links">
+    <li><a href="#courses">Courses</a></li>
+    <li><a href="#features">Platform</a></li>
+    <li><a href="#instructors">Instructors</a></li>
+    <li><a href="#reviews">Reviews</a></li>
+  </ul>
+  <div class="nav-right">
+    <button class="nav-pill">Log In</button>
+    <button class="nav-cta">Start Free →</button>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-glow"></div>
+  <div class="hero-glow2"></div>
+  <div class="hero-eyebrow">
+    <div class="eyebrow-line"></div>
+    <span class="eyebrow-text">AI-Powered Education · Est. 2025</span>
+  </div>
+  <h1>
+    <span class="block">Engineered</span>
+    <span class="block outline-text">for the</span>
+    <span class="block">Future.</span>
+  </h1>
+  <div class="hero-bottom">
+    <p class="hero-desc">Master in-demand tech skills with <strong>expert-led courses</strong>, real-world projects, and AI-powered guidance that adapts to <strong>your pace and goals</strong>.</p>
+    <div class="hero-actions">
+      <button class="btn-lime" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'})">Explore Courses</button>
+      <button class="btn-ghost">Watch Demo ▶</button>
+    </div>
+  </div>
+  <div class="hero-marquee-wrap">
+    <div class="hero-marquee">
+      <span class="marquee-item"><span class="marquee-dot"></span>Cloud Computing</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Machine Learning</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>DevOps &amp; CI/CD</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Cybersecurity</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Web Development</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Data Science</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Blockchain</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>IoT Engineering</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Cloud Computing</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Machine Learning</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>DevOps &amp; CI/CD</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Cybersecurity</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Web Development</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Data Science</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>Blockchain</span>
+      <span class="marquee-item"><span class="marquee-dot"></span>IoT Engineering</span>
+    </div>
+  </div>
+</section>
+
+<!-- STATS -->
+<div class="stats-strip reveal">
+  <div class="stat-item"><div class="stat-num">52<span>K+</span></div><div class="stat-label">Active Learners</div></div>
+  <div class="stat-item"><div class="stat-num">1.4<span>K</span></div><div class="stat-label">Expert Courses</div></div>
+  <div class="stat-item"><div class="stat-num">98<span>%</span></div><div class="stat-label">Satisfaction Rate</div></div>
+  <div class="stat-item"><div class="stat-num">120<span>+</span></div><div class="stat-label">Partner Companies</div></div>
+</div>
+
+<!-- COURSES -->
+<section class="section" id="courses">
+  <div class="section-head reveal">
+    <div>
+      <div class="section-kicker">Catalogue</div>
+      <h2 class="section-title">Courses built for <em>real careers</em></h2>
+    </div>
+    <a href="#" class="link-all">View all courses</a>
+  </div>
+  <div class="tabs reveal">
+    <button class="tab active">All</button>
+    <button class="tab">Cloud</button>
+    <button class="tab">AI &amp; ML</button>
+    <button class="tab">DevOps</button>
+    <button class="tab">Security</button>
+    <button class="tab">Web Dev</button>
+  </div>
+  <div class="courses-grid reveal">
+    <div class="course-card">
+      <div class="card-top g1"><div class="card-top-inner">☁️</div><span class="card-tag">Cloud</span></div>
+      <div class="card-body">
+        <h3>Cloud App Development with AWS</h3>
+        <p>EC2, S3, Lambda, serverless architectures — everything to build and deploy on AWS at scale.</p>
+        <div class="card-footer">
+          <div><div class="card-price">₹4,999 <sub>/ lifetime</sub></div><div><span class="card-stars">★★★★★</span><span class="card-rcount"> (2.1k)</span></div></div>
+          <div class="card-meta"><span class="card-dur">42 hrs</span><button class="card-btn">→</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="card-top g2"><div class="card-top-inner">🤖</div><span class="card-tag">AI &amp; ML</span></div>
+      <div class="card-body">
+        <h3>Machine Learning &amp; Deep Learning Bootcamp</h3>
+        <p>Regression to transformers — a comprehensive hands-on curriculum used at top AI labs.</p>
+        <div class="card-footer">
+          <div><div class="card-price">₹6,499 <sub>/ lifetime</sub></div><div><span class="card-stars">★★★★★</span><span class="card-rcount"> (3.4k)</span></div></div>
+          <div class="card-meta"><span class="card-dur">60 hrs</span><button class="card-btn">→</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="card-top g3"><div class="card-top-inner">⚙️</div><span class="card-tag">DevOps</span></div>
+      <div class="card-body">
+        <h3>DevOps with Docker, Kubernetes &amp; CI/CD</h3>
+        <p>Production-grade pipelines using tools deployed by the world's largest engineering teams.</p>
+        <div class="card-footer">
+          <div><div class="card-price">₹5,299 <sub>/ lifetime</sub></div><div><span class="card-stars">★★★★★</span><span class="card-rcount"> (1.8k)</span></div></div>
+          <div class="card-meta"><span class="card-dur">38 hrs</span><button class="card-btn">→</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="card-top g4"><div class="card-top-inner">🔐</div><span class="card-tag">Security</span></div>
+      <div class="card-body">
+        <h3>Ethical Hacking &amp; Network Security</h3>
+        <p>Pen testing, OWASP Top 10, and enterprise defense strategies for modern infrastructure.</p>
+        <div class="card-footer">
+          <div><div class="card-price">₹5,999 <sub>/ lifetime</sub></div><div><span class="card-stars">★★★★☆</span><span class="card-rcount"> (1.2k)</span></div></div>
+          <div class="card-meta"><span class="card-dur">44 hrs</span><button class="card-btn">→</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="card-top g5"><div class="card-top-inner">💻</div><span class="card-tag">Web Dev</span></div>
+      <div class="card-body">
+        <h3>Full-Stack Web Dev with React &amp; Node.js</h3>
+        <p>Pixel-perfect UIs to robust REST &amp; GraphQL APIs — ship full products end to end.</p>
+        <div class="card-footer">
+          <div><div class="card-price">₹5,799 <sub>/ lifetime</sub></div><div><span class="card-stars">★★★★★</span><span class="card-rcount"> (4.1k)</span></div></div>
+          <div class="card-meta"><span class="card-dur">55 hrs</span><button class="card-btn">→</button></div>
+        </div>
+      </div>
+    </div>
+    <div class="course-card">
+      <div class="card-top g6"><div class="card-top-inner">📊</div><span class="card-tag">Data</span></div>
+      <div class="card-body">
+        <h3>Data Science &amp; Analytics with Python</h3>
+        <p>Pandas, NumPy, SQL, visualization — from raw data to boardroom insights.</p>
+        <div class="card-footer">
+          <div><div class="card-price">₹5,499 <sub>/ lifetime</sub></div><div><span class="card-stars">★★★★★</span><span class="card-rcount"> (2.7k)</span></div></div>
+          <div class="card-meta"><span class="card-dur">48 hrs</span><button class="card-btn">→</button></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURES BENTO -->
+<section class="section" id="features">
+  <div class="section-head reveal">
+    <div>
+      <div class="section-kicker">Platform</div>
+      <h2 class="section-title">Why learners choose <em>Nexus</em></h2>
+    </div>
+  </div>
+  <div class="bento reveal">
+    <div class="bento-cell span-5 tall bento-highlight">
+      <div class="cell-icon">🧠</div>
+      <h4>AI-Powered Learning Paths</h4>
+      <p>Our intelligent engine analyzes your skill gaps, learning speed, and goals to build a custom curriculum that evolves with you — not a rigid syllabus.</p>
+      <div class="pill-group">
+        <span class="pill active">Adaptive</span>
+        <span class="pill active">Personalized</span>
+        <span class="pill">Self-paced</span>
+      </div>
+    </div>
+    <div class="bento-cell span-7 tall">
+      <div class="cell-icon">📈</div>
+      <h4>Skill Proficiency Tracking</h4>
+      <p>Real-time dashboards show exactly where you stand across every domain.</p>
+      <div class="progress-list">
+        <div class="prog-item"><div class="prog-label"><span>Cloud Architecture</span><span>87%</span></div><div class="prog-track"><div class="prog-fill" data-width="87"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span>Machine Learning</span><span>64%</span></div><div class="prog-track"><div class="prog-fill" data-width="64"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span>DevOps &amp; CI/CD</span><span>91%</span></div><div class="prog-track"><div class="prog-fill" data-width="91"></div></div></div>
+        <div class="prog-item"><div class="prog-label"><span>Cybersecurity</span><span>52%</span></div><div class="prog-track"><div class="prog-fill" data-width="52"></div></div></div>
+      </div>
+    </div>
+    <div class="bento-cell span-4">
+      <div class="big-number">24/7</div>
+      <h4>Always On</h4>
+      <p>Learn at 2 AM or 2 PM. Every course, every resource, always accessible.</p>
+    </div>
+    <div class="bento-cell span-4">
+      <div class="cell-icon">🏅</div>
+      <h4>Industry Certificates</h4>
+      <p>Credentials recognized by 120+ companies including Amazon, IBM, and Infosys.</p>
+    </div>
+    <div class="bento-cell span-4">
+      <div class="cell-icon">🌍</div>
+      <h4>Global Community</h4>
+      <p>80+ countries. Peer forums, study groups, and live mentorship sessions daily.</p>
+    </div>
+    <div class="bento-cell span-8">
+      <div class="cell-icon">📱</div>
+      <h4>WhatsApp Integration</h4>
+      <p>Get deadline reminders, live session alerts, and personalized study nudges directly in WhatsApp. Connect once and never miss a beat.</p>
+      <div class="pill-group" style="margin-top:16px">
+        <span class="pill active">Assignment Alerts</span>
+        <span class="pill active">Session Reminders</span>
+        <span class="pill active">AI Study Tips</span>
+        <span class="pill">Progress Reports</span>
+      </div>
+    </div>
+    <div class="bento-cell span-4">
+      <div class="cell-icon">⚡</div>
+      <h4>Instant Code Sandbox</h4>
+      <p>Run code and test concepts right inside the browser — no setup required.</p>
+    </div>
+  </div>
+</section>
+
+<!-- INSTRUCTORS -->
+<section class="section" id="instructors">
+  <div class="section-head reveal">
+    <div>
+      <div class="section-kicker">Experts</div>
+      <h2 class="section-title">Learn from the <em>best in field</em></h2>
+    </div>
+    <a href="#" class="link-all">All instructors</a>
+  </div>
+  <div class="instructors-row reveal">
+    <div class="instructor-card">
+      <div class="inst-avatar">👨‍💻</div>
+      <div class="inst-name">Rahul Mehta</div>
+      <div class="inst-role">Cloud Architect</div>
+      <div class="inst-bio">10+ yrs at AWS. Designed infra for 3 unicorn startups. Certified Solutions Architect Pro.</div>
+    </div>
+    <div class="instructor-card">
+      <div class="inst-avatar">👩‍🔬</div>
+      <div class="inst-name">Priya Nair</div>
+      <div class="inst-role">AI/ML Research Lead</div>
+      <div class="inst-bio">PhD from IIT Delhi. 14 published papers. Previously at Google Brain and IBM Research.</div>
+    </div>
+    <div class="instructor-card">
+      <div class="inst-avatar">🧑‍💼</div>
+      <div class="inst-name">Siddharth Roy</div>
+      <div class="inst-role">DevOps Lead</div>
+      <div class="inst-bio">Built CI/CD at Flipkart &amp; Zomato. Speaker at KubeCon 2023 &amp; DockerCon 2024.</div>
+    </div>
+    <div class="instructor-card">
+      <div class="inst-avatar">👩‍💻</div>
+      <div class="inst-name">Anjali Sharma</div>
+      <div class="inst-role">Security Engineer</div>
+      <div class="inst-bio">OSCP certified. Bug bounty hunter. Former red team at a Fortune 500 fintech company.</div>
+    </div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testi-section section" id="reviews">
+  <div class="section-head reveal">
+    <div>
+      <div class="section-kicker">Social Proof</div>
+      <h2 class="section-title">Real results, <em>real people</em></h2>
+    </div>
+  </div>
+  <div class="testi-grid reveal">
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Cracked AWS Solutions Architect in 7 weeks. The course content is denser than anything I found elsewhere — this is the real deal for engineers who want depth."</p>
+      <div class="testi-author">
+        <div class="testi-av">👨‍💻</div>
+        <div><div class="testi-name">Arjun Krishnan</div><div class="testi-role">Cloud Eng, Bangalore</div></div>
+        <span class="testi-company">AWS Certified</span>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"Got a 42% salary hike after the DevOps bootcamp. The hands-on labs are genuinely production-grade — I used the exact same tools on day one of my new job."</p>
+      <div class="testi-author">
+        <div class="testi-av">👩‍🎓</div>
+        <div><div class="testi-name">Meera Pillai</div><div class="testi-role">DevOps Lead, Pune</div></div>
+        <span class="testi-company">+42% Salary</span>
+      </div>
+    </div>
+    <div class="testi-card">
+      <div class="testi-stars">★★★★★</div>
+      <p class="testi-text">"The AI path suggestion told me exactly what to study for a career pivot into ML. Switched industries in 4 months. WhatsApp reminders kept me consistent."</p>
+      <div class="testi-author">
+        <div class="testi-av">🧑‍💼</div>
+        <div><div class="testi-name">Vikram Sood</div><div class="testi-role">ML Engineer, Hyderabad</div></div>
+        <span class="testi-company">Career Switch</span>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA -->
+<section class="cta-section" id="contact">
+  <div class="cta-glow"></div>
+  <div class="cta-kicker">Ready to begin?</div>
+  <h2 class="cta-title">Your next career move starts here.</h2>
+  <p class="cta-sub">Join 52,000+ learners building the skills employers actually want. First course on us.</p>
+  <div class="cta-btns">
+    <button class="btn-lime" style="padding:16px 40px;font-size:1rem" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'})">Get Started Free →</button>
+    <button class="btn-ghost" style="padding:15px 36px;font-size:.95rem" >Talk to Advisor</button>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-top">
+    <div>
+      <span class="footer-logo">Nexus<span>.</span>Academy</span>
+      <p class="footer-desc">AI-powered education for the next generation of engineers, developers, and tech leaders across India and beyond.</p>
+    </div>
+    <div class="footer-col">
+      <h5>Courses</h5>
+      <a href="#">Cloud Computing</a>
+      <a href="#">Machine Learning</a>
+      <a href="#">Web Development</a>
+      <a href="#">Cybersecurity</a>
+      <a href="#">Data Science</a>
+    </div>
+    <div class="footer-col">
+      <h5>Company</h5>
+      <a href="#">About Us</a>
+      <a href="#">Careers</a>
+      <a href="#">Blog</a>
+      <a href="#">Press</a>
+      <a href="#">Partners</a>
+    </div>
+    <div class="footer-col">
+      <h5>Support</h5>
+      <a href="#">Help Center</a>
+      <a href="#">Privacy Policy</a>
+      <a href="#">Terms of Service</a>
+      <a href="https://wa.me/919999999999" target="_blank">WhatsApp Us</a>
+      <a href="#">Contact</a>
+    </div>
+  </div>
+  <div class="footer-bottom">
+    <p>© 2025 Nexus Academy. All rights reserved. Subject Code: 23CAM2004</p>
+    <span class="badge">⚡ Watson Assistant Live</span>
+  </div>
+</footer>
+
+<!-- ── Custom AI Chatbot ── -->
+
+
+
+
+<script>
+
+/* Custom Cursor */
+const cur=document.getElementById('cursor'),ring=document.getElementById('cursor-ring');
+let mx=0,my=0,rx=0,ry=0;
+document.addEventListener('mousemove',e=>{mx=e.clientX;my=e.clientY;cur.style.left=mx+'px';cur.style.top=my+'px';});
+(function animRing(){rx+=(mx-rx)*.12;ry+=(my-ry)*.12;ring.style.left=rx+'px';ring.style.top=ry+'px';requestAnimationFrame(animRing);})();
+document.querySelectorAll('a,button,.course-card,.bento-cell,.instructor-card,.testi-card').forEach(el=>{
+  el.addEventListener('mouseenter',()=>{cur.style.width='20px';cur.style.height='20px';ring.style.width='56px';ring.style.height='56px';});
+  el.addEventListener('mouseleave',()=>{cur.style.width='12px';cur.style.height='12px';ring.style.width='38px';ring.style.height='38px';});
+});
+
+/* Particle Canvas */
+const canvas=document.getElementById('bg-canvas'),ctx=canvas.getContext('2d');
+let W,H,particles=[];
+function resize(){W=canvas.width=window.innerWidth;H=canvas.height=window.innerHeight;}
+resize();window.addEventListener('resize',resize);
+class Particle{
+  constructor(){this.reset();}
+  reset(){this.x=Math.random()*W;this.y=Math.random()*H;this.r=Math.random()*1.4+.3;this.vx=(Math.random()-.5)*.25;this.vy=(Math.random()-.5)*.25;this.alpha=Math.random()*.5+.1;}
+  draw(){ctx.beginPath();ctx.arc(this.x,this.y,this.r,0,Math.PI*2);ctx.fillStyle=`rgba(99,220,120,${this.alpha})`;ctx.fill();}
+  update(){this.x+=this.vx;this.y+=this.vy;if(this.x<0||this.x>W||this.y<0||this.y>H)this.reset();}
+}
+for(let i=0;i<140;i++)particles.push(new Particle());
+function drawConnections(){
+  for(let i=0;i<particles.length;i++)for(let j=i+1;j<particles.length;j++){
+    const dx=particles[i].x-particles[j].x,dy=particles[i].y-particles[j].y,d=Math.sqrt(dx*dx+dy*dy);
+    if(d<110){ctx.beginPath();ctx.moveTo(particles[i].x,particles[i].y);ctx.lineTo(particles[j].x,particles[j].y);ctx.strokeStyle=`rgba(99,220,120,${(.12*(1-d/110)).toFixed(3)})`;ctx.lineWidth=.6;ctx.stroke();}
+  }
+}
+function loop(){ctx.clearRect(0,0,W,H);particles.forEach(p=>{p.update();p.draw();});drawConnections();requestAnimationFrame(loop);}
+loop();
+
+/* Scroll Reveal */
+const revealEls=document.querySelectorAll('.reveal');
+const obs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');obs.unobserve(e.target);}});
+},{threshold:.1});
+revealEls.forEach(el=>obs.observe(el));
+
+/* Progress Bars */
+const progObs=new IntersectionObserver(entries=>{
+  entries.forEach(e=>{
+    if(e.isIntersecting){
+      e.target.querySelectorAll('.prog-fill').forEach(b=>{b.style.width=b.dataset.width+'%';});
+      progObs.unobserve(e.target);
+    }
+  });
+},{threshold:.3});
+document.querySelectorAll('.bento').forEach(el=>progObs.observe(el));
+
+/* Tabs */
+document.querySelectorAll('.tab').forEach(tab=>{
+  tab.addEventListener('click',()=>{document.querySelectorAll('.tab').forEach(t=>t.classList.remove('active'));tab.classList.add('active');});
+});
+
+/* Nav scroll */
+window.addEventListener('scroll',()=>{
+  document.getElementById('main-nav').style.background=window.scrollY>20?'rgba(8,12,20,.97)':'rgba(8,12,20,.8)';
+});
+
+/* Smooth scroll */
+document.querySelectorAll('a[href^="#"]').forEach(a=>{
+  a.addEventListener('click',e=>{const t=document.querySelector(a.getAttribute('href'));if(t){e.preventDefault();t.scrollIntoView({behavior:'smooth'});}});
+});
+</script>
+
+
+
+<script>
+window.watsonAssistantChatOptions = {
+  integrationID: "d8bdaa50-7fc9-43a6-b4ba-7525f34fae62",
+  region: "eu-de",
+  serviceInstanceID: "bc4e0299-7e8f-44da-a215-7710310666bd",
+  onLoad: async (instance) => {
+    await instance.updateCSSVariables({
+      "BASE-font-family": "Manrope",
+      "BASE-primary-color": "#63dc78",
+      "BASE-background-color": "#0d1220"
+    });
+    await instance.render();
+  }
+};
+setTimeout(function () {
+  const t = document.createElement("script");
+  t.src =
+    "https://web-chat.global.assistant.watson.appdomain.cloud/versions/" +
+    (window.watsonAssistantChatOptions.clientVersion || "latest") +
+    "/WatsonAssistantChatEntry.js";
+  document.head.appendChild(t);
+}, 0);
+</script>
+
+</body>
+</html>
