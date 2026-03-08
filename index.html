@@ -588,12 +588,15 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:70px 60p
   <p class="cta-sub">Join 52,000+ learners building the skills employers actually want. First course on us.</p>
   <div class="cta-btns">
     <button class="btn-lime" style="padding:16px 40px;font-size:1rem" onclick="document.getElementById('courses').scrollIntoView({behavior:'smooth'})">Get Started Free →</button>
-    <button class="btn-ghost" style="padding:15px 36px;font-size:.95rem" >Talk to Advisor</button>
+    <a href="https://wa.me/917347222812?text=Hello%20I%20want%20to%20talk%20to%20an%20advisor"
+class="btn-ghost"
+style="text-decoration:none">
+Talk to Advisor
+</a>
   </div>
 </section>
 
 <!-- FOOTER -->
-<footer>
   <div class="footer-top">
     <div>
       <span class="footer-logo">Nexus<span>.</span>Academy</span>
@@ -629,6 +632,23 @@ footer{background:var(--bg2);border-top:1px solid var(--border);padding:70px 60p
     <span class="badge">⚡ Watson Assistant Live</span>
   </div>
 </footer>
+  </section>
+
+<!-- QR CODE SECTION -->
+<section class="section">
+<h2 style="text-align:center;margin-bottom:40px;">Scan to Visit Website</h2>
+
+<div style="display:flex;justify-content:center;">
+<img src="https://api.qrserver.com/v1/create-qr-code/?size=200x200&data=https://nexus-academy-dusky.vercel.app" />
+</div>
+
+<p style="text-align:center;margin-top:15px;color:#7a8ba8;">
+Scan this QR code to open Nexus Academy
+</p>
+</section>
+
+<!-- FOOTER -->
+<footer>
 
 <!-- ── Custom AI Chatbot ── -->
 
@@ -727,6 +747,36 @@ setTimeout(function () {
   document.head.appendChild(t);
 }, 0);
 </script>
+<!-- WhatsApp Chat Button -->
+<a href="https://wa.me/917347222812?text=Hello%20Nexus%20Academy,%20I%20want%20information%20about%20courses"
+class="whatsapp-button"
+target="_blank">
+💬 Chat on WhatsApp
+</a>
+
+<style>
+.whatsapp-button{
+position:fixed;
+bottom:30px;
+left:30px;
+background:#25D366;
+color:white;
+padding:12px 18px;
+border-radius:40px;
+font-family:Manrope;
+font-weight:600;
+text-decoration:none;
+box-shadow:0 10px 25px rgba(0,0,0,.35);
+z-index:9999;
+transition:all .3s;
+}
+.whatsapp-button:hover{
+transform:translateY(-4px);
+}
+</style>
+
+</body>
+</html>
 
 </body>
 </html>
